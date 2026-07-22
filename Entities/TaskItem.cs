@@ -27,4 +27,10 @@ public class TaskItem
 
     [Required]
     public string Status { get; set; } = string.Empty;
+    
+    [Column("user_id")]
+    public int UserId { get; set; }
+
+    [ForeignKey(nameof(UserId))]
+    public User? User { get; set; }
 }
