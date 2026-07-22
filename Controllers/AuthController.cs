@@ -31,6 +31,11 @@ public class AuthController(TaskDbContext context, IConfiguration config) : Cont
             return Conflict("Username already taken.");
         }
 
+        if (dto.Password.Length < 6)
+        {
+            return BadRequest("Password must be at least 6 characters.");
+        }
+
         var user = new User
         {
             Username = dto.Username,
