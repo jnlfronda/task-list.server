@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using task_list.server.Data;
 
@@ -11,9 +12,11 @@ using task_list.server.Data;
 namespace task_list.server.Migrations
 {
     [DbContext(typeof(TaskDbContext))]
-    partial class TaskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260723102914_AddSsoColumnsToUsers")]
+    partial class AddSsoColumnsToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace task_list.server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DueDate")
+                    b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("due_date");
 

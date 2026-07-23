@@ -17,7 +17,7 @@ public class TaskItem
     public string Description { get; set; } = string.Empty;
 
     [Column("due_date")]
-    public DateTime DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
 
     [Required]
     public string Priority { get; set; } = string.Empty;
