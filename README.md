@@ -48,7 +48,7 @@ The Angular client that consumes this API lives in the sibling folder `task-list
 
 2. Update the connection string in [appsettings.json](appsettings.json) → `ConnectionStrings:DefaultConnection` for your SQL instance. The default targets a local SQL Express instance:
    ```
-   Server=DESKTOP-D1M9ECD\SQLEXPRESS;Database=task-manager;Trusted_Connection=True;TrustServerCertificate=True;
+   Server={{ YOUR DATABASE SERVER }};Database={{ YOUR DATABASE NAME }};Trusted_Connection=True;TrustServerCertificate=True;
    ```
 
 3. Configure the JWT signing key via **user-secrets** (never commit secrets):
