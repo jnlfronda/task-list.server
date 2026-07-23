@@ -32,7 +32,7 @@ public class TaskController(TaskDbContext context) : ControllerBase
             .FirstOrDefaultAsync(t => t.Id == id && t.UserId == CurrentUserId);
         if (taskItem == null)
         {
-            return NotFound();
+            return NotFound("There are no tasks available");
         }
         return taskItem;
     }
@@ -51,14 +51,14 @@ public class TaskController(TaskDbContext context) : ControllerBase
     {
         if (id != taskItem.Id)
         {
-            return BadRequest();
+            return BadRequest("Task item is not the same");
         }
 
         var owned = await _dbContext.Tasks
             .AnyAsync(t => t.Id == id && t.UserId == CurrentUserId);
         if (!owned)
         {
-            return NotFound();
+            return NotFound("Task is not owned by the user");
         }
 
         taskItem.UserId = CurrentUserId;
@@ -72,7 +72,7 @@ public class TaskController(TaskDbContext context) : ControllerBase
         {
             if (!TaskExists(id))
             {
-                return NotFound();
+                return NotFound("Task does not exist");
             }
             else
             {
@@ -89,7 +89,7 @@ public class TaskController(TaskDbContext context) : ControllerBase
             .FirstOrDefaultAsync(t => t.Id == id && t.UserId == CurrentUserId);
         if (taskItem == null)
         {
-            return NotFound();
+            return NotFound("There are no tasks available");
         }
         _dbContext.Tasks.Remove(taskItem);
         await _dbContext.SaveChangesAsync();
