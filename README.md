@@ -73,7 +73,7 @@ The Angular client that consumes this API lives in the sibling folder `task-list
    dotnet build
    ```
 
-To run the frontend against this API, follow the setup steps in [`../task-list.client/README.md`](../task-list.client/README.md). Both apps must be running simultaneously (client on `4200`, server on `4201`).
+To run the frontend against this API, follow the setup steps in [`../task-list.client/README.md`](https://github.com/jnlfronda/task-list.client/edit/main/README.md). Both apps must be running simultaneously (client on `4200`, server on `4201`).
 
 ---
 
