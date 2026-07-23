@@ -90,12 +90,7 @@ To run the frontend against this API, follow the setup steps in [`../task-list.c
 - The login endpoint only accepts local (traditional) accounts — SSO users cannot log in via password (see §4).
 - Token lifetime is configurable via `Jwt:ExpireMinutes` (default: 120 minutes).
 
-**Why this over SSO:**
-- Self-contained — the API can be developed and tested with zero dependency on an external identity provider.
-- Simple to demo, reason about, and secure end-to-end with a single secret.
-- Adequate for a personal task tracker with no cross-organization identity needs.
-
-**SSO is not implemented yet**, but the database schema and `User` entity already support it (see §4 and §6). Adding SSO becomes an OIDC handler in `Program.cs` plus an upsert into `Users`; no schema change is needed.
+**Note:** Only local accounts are supported. SSO is not implemented in this version.
 
 ---
 
@@ -110,10 +105,6 @@ Two tables, both managed by EF Core migrations under [Migrations/](Migrations/).
 | `id`           | int (PK, IDENT)   |                                                         |
 | `Username`     | nvarchar(100)     | **Unique index**                                        |
 | `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt hash for local users, NULL for SSO |
-| `Provider`     | nvarchar(50)      | `"Local"` (default) / `"Microsoft"` / `"Google"` / …    |
-| `ExternalId`   | nvarchar(255)     | Nullable — the provider's stable user id (SSO only)     |
-
-Additional constraint: filtered unique index on (`Provider`, `ExternalId`) where `ExternalId IS NOT NULL`, so each SSO identity maps to exactly one local `Users` row.
 
 ### `Tasks`
 
@@ -127,19 +118,6 @@ Additional constraint: filtered unique index on (`Provider`, `ExternalId`) where
 | `Category`    | nvarchar(max)                 | Nullable                                 |
 | `Status`      | nvarchar(max)                 | `Pending` / `In Progress` / `Completed`  |
 | `user_id`     | int (FK → Users.id, cascade)  | Scopes every task to its owner           |
-
-### Traditional vs. SSO users
-
-Both user types live in the **same `Users` table** and are distinguished by the `Provider` column:
-
-| Field         | Local user (traditional)   | SSO user (future)                       |
-| ------------- | -------------------------- | --------------------------------------- |
-| `Username`    | chosen by the user         | usually derived from the SSO profile    |
-| `PasswordHash`| BCrypt hash                | `NULL`                                  |
-| `Provider`    | `"Local"`                  | `"Microsoft"` / `"Google"` / …          |
-| `ExternalId`  | `NULL`                     | provider's stable subject/id            |
-
-Because `Tasks.user_id` is a single FK to `Users.id`, task ownership queries (`WHERE user_id = @current`) work identically for every user regardless of how they signed in.
 
 ---
 
@@ -187,26 +165,4 @@ You can also import [task-list.server.http](task-list.server.http) into your edi
 
 ## 6. Configuring SSO providers
 
-**SSO is not yet wired up in code**, so no provider client IDs, secrets, or callback URLs are required to run or test the API today. The `Users` table already has the columns needed to host SSO identities (see §4).
-
-When SSO is added, credentials should be stored via `dotnet user-secrets` (development) or environment variables (production) — **never committed to source control**. The expected shape:
-
-```json
-"Authentication": {
-  "Microsoft": {
-    "ClientId": "<from Entra ID app registration>",
-    "ClientSecret": "<from Entra ID app registration>"
-  },
-  "Google": {
-    "ClientId": "<from Google Cloud Console>",
-    "ClientSecret": "<from Google Cloud Console>"
-  }
-}
-```
-
-Typical local callback URL for OIDC: **`http://localhost:4201/signin-oidc`**. This URL must also be registered on the provider side:
-
-- **Microsoft Entra ID:** *App registration → Authentication → Redirect URIs*
-- **Google:** *OAuth 2.0 Client → Authorized redirect URIs*
-
-Server-side wiring would extend the existing `AddAuthentication(...)` in [Program.cs](Program.cs) with `.AddOpenIdConnect(...)`. On the OIDC callback, the server would upsert the SSO user into the `Users` table (with `Provider`, `ExternalId`, `PasswordHash = NULL`) and issue the same JWT format used today, so the rest of the API is unchanged.
+**Not applicable. ** SSO is not supported in this build. No provider configuration is required. Only local username/password accounts are available.
