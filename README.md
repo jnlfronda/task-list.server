@@ -87,7 +87,6 @@ To run the frontend against this API, follow the setup steps in [`../task-list.c
   - `unique_name` — the username, displayed by the client.
 - JWT validation is configured in [Program.cs](Program.cs) via `AddJwtBearer(...)`; issuer, audience, lifetime, and signing key are all checked on every request.
 - Task endpoints are protected by `[Authorize]` on `TaskController`, and every query filters by `UserId == CurrentUserId` (read from the token's `nameid` claim).
-- The login endpoint only accepts local (traditional) accounts — SSO users cannot log in via password (see §4).
 - Token lifetime is configurable via `Jwt:ExpireMinutes` (default: 120 minutes).
 
 **Note:** Only local accounts are supported. SSO is not implemented in this version.
@@ -104,7 +103,7 @@ Two tables, both managed by EF Core migrations under [Migrations/](Migrations/).
 | -------------- | ----------------- | ------------------------------------------------------- |
 | `id`           | int (PK, IDENT)   |                                                         |
 | `Username`     | nvarchar(100)     | **Unique index**                                        |
-| `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt hash for local users, NULL for SSO |
+| `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt hash for local users              |
 
 ### `Tasks`
 
